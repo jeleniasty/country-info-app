@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +34,10 @@ public class AddressServiceImpl implements AddressService{
         return countriesInfo;
     }
 
-    private List<AddressDTO> getRandomAddresses(Integer number) {
-        List<AddressDTO> addresses = new ArrayList<>();
+    private Set<AddressDTO> getRandomAddresses(Integer number) {
+        Set<AddressDTO> addresses = new HashSet<>();
 
-        for (int i = 0; i < number; i++) {
+       while (addresses.size() < number){
             AddressDTO address = randomAddressClient.getRandomAddress();
             addresses.add(address);
         }
