@@ -2,6 +2,7 @@ package com.jeleniasty.countryinfoapp.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeleniasty.countryinfoapp.dto.CountryDTO;
+import com.jeleniasty.countryinfoapp.exception.NoInformationFoundException;
 import com.jeleniasty.countryinfoapp.properties.RestCountriesClientProperties;
 import com.squareup.okhttp.*;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,10 @@ public class RestCountriesClient {
 
     public CountryDTO getCountryInfo(String countryName) {
 
+        if (countryName.contains("(")) {
+            countryName = countryName.substring(0, countryName.indexOf("(")-1);
+        }
+
         Request request = new Request.Builder()
                 .url(
                         restCountriesClientProperties.getBaseUrl()
@@ -34,7 +39,7 @@ public class RestCountriesClient {
             return (objectMapper.readValue(responseBody.string(), CountryDTO[].class))[0];
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NoInformationFoundException("No information found!");
         }
 
     }
