@@ -1,13 +1,13 @@
-package com.jeleniasty.countryinfoapp.DAO;
+package com.jeleniasty.countryinfoapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Value;
+import org.springframework.stereotype.Repository;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Address {
+@Value
+public class AddressDTO {
 
      int id;
      String uid;
