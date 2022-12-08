@@ -1,0 +1,7 @@
+restcountries.client:
+  baseUrl: "https://restcountries.com"
+  getCountryByNameEndpoint: "/v3.1/name"
+
+randomaddress.client:
+  baseUrl: "https://random-data-api.com"
+  getRandomAddressEndpoint: "/api/v2/addresses"
