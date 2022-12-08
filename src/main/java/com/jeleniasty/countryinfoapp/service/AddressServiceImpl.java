@@ -8,14 +8,12 @@ import com.jeleniasty.countryinfoapp.dto.CountryResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AddressServiceImpl implements AddressService{
+public class AddressServiceImpl implements AddressService {
 
     private final RestCountriesClient restCountriesClient;
     private final RandomAddressClient randomAddressClient;
@@ -23,21 +21,25 @@ public class AddressServiceImpl implements AddressService{
     @Override
     public List<CountryResponseDTO> getCountriesInfo(Integer number) {
 
-        List<CountryResponseDTO> countriesInfo = new ArrayList<>();
+        Set<CountryResponseDTO> countriesInfo = new HashSet<>();
 
         for (AddressDTO randomAddress : getRandomAddresses(number)) {
-            String countryName = randomAddress.getCountry();
-            CountryDTO countryDTO = restCountriesClient.getCountryInfo(countryName);
-            countryDTO.setCountryName(countryName);
+            String countryName = randomAddress.country();
+            CountryDTO countryDTO = restCountriesClient.getCountryInfo(countryName).withCountryName(countryName);
             countriesInfo.add(mapCountryDTO(countryDTO));
         }
-        return countriesInfo;
+
+        return countriesInfo.stream()
+                .sorted(Comparator
+                        .comparingLong(CountryResponseDTO::population)
+                        .reversed())
+                .collect(Collectors.toList());
     }
 
     private Set<AddressDTO> getRandomAddresses(Integer number) {
         Set<AddressDTO> addresses = new HashSet<>();
 
-       while (addresses.size() < number){
+        while (addresses.size() < number) {
             AddressDTO address = randomAddressClient.getRandomAddress();
             addresses.add(address);
         }
@@ -46,10 +48,10 @@ public class AddressServiceImpl implements AddressService{
 
     private CountryResponseDTO mapCountryDTO(CountryDTO countryDTO) {
         return new CountryResponseDTO(
-                countryDTO.getCountryName(),
-                countryDTO.getCapital(),
-                new ArrayList<String>(countryDTO.getLanguages().values()),
-                countryDTO.getPopulation()
+                countryDTO.countryName(),
+                countryDTO.capital(),
+                new ArrayList<>(countryDTO.languages().values()),
+                countryDTO.population()
         );
     }
 }
